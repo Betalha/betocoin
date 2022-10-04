@@ -26,9 +26,9 @@ class Betocoin {
     }
 }
 class BlockChain {
-    LinkedList<Block> chain = new LinkedList<>();
-    int index = 0;
-    String prevH;
+    private LinkedList<Block> chain = new LinkedList<>();
+    private int index = 0;
+    private String prevH;
     public void createGenesis(){
         Timestamp instant = Timestamp.from(Instant.now());
         Block b0 = new Block(index, "geneis",instant ,"0");
@@ -68,7 +68,7 @@ class Block {
         this.PHash = z;
         this.Hash = CalculateHash();
     }
-    String CalculateHash() {
+    private String CalculateHash() {
         try
         {
             H = toHexString(getSHA(this.index + this.data + this.timestamp + this.PHash));
@@ -78,13 +78,13 @@ class Block {
         }
         return H;
     }
-    public static byte[] getSHA(String input) throws NoSuchAlgorithmException
+    private static byte[] getSHA(String input) throws NoSuchAlgorithmException
     {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         return md.digest(input.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String toHexString(byte[] hash)
+    private static String toHexString(byte[] hash)
     {
         BigInteger number = new BigInteger(1, hash);
         StringBuilder hexString = new StringBuilder(number.toString(16));
