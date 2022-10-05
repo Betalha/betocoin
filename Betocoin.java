@@ -28,20 +28,20 @@ class Betocoin {
 class BlockChain {
     private LinkedList<Block> chain = new LinkedList<>();
     private int index = 0;
-    private String prevH;
+    private String lastHash;
     public BlockChain(){
         Timestamp instant = Timestamp.from(Instant.now());
         Block b0 = new Block(index, "genesis block",instant ,"0");
         chain.add(b0);
-        prevH = b0.Hash;
+        lastHash = b0.Hash;
         index++;
     }
 
     public void addBlock(String data){
         Timestamp instant = Timestamp.from(Instant.now());
-        Block B = new Block(index, data, instant, prevH);
+        Block B = new Block(index, data, instant, lastHash);
         chain.add(B);
-        prevH = B.Hash;
+        lastHash = B.Hash;
         index++;
     }
 
@@ -66,7 +66,7 @@ class BlockChain {
 
 class Block {
     int index;
-    String data, prevHash, Hash, H;
+    String data, prevHash, Hash;
     Timestamp timestamp;
     public Block(int index,String data, Timestamp timestamp, String prevHash) {
         this.index = index;
