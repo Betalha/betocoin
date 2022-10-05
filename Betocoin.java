@@ -14,7 +14,6 @@ class Betocoin {
     {
         Scanner sc = new Scanner(System.in);
         BlockChain beto = new BlockChain();
-        beto.createGenesis();
         while (sc.hasNextLine()) {
             String data = sc.nextLine();
             if (data == "") break;
@@ -22,6 +21,7 @@ class Betocoin {
             System.out.println(beto.getlast().toString());
         }
         System.out.println("Betocoin:");
+        System.out.println("blockchain valid: " + beto.validate());
         System.out.println(beto.toString());
     }
 }
@@ -29,9 +29,9 @@ class BlockChain {
     private LinkedList<Block> chain = new LinkedList<>();
     private int index = 0;
     private String prevH;
-    public void createGenesis(){
+    public BlockChain(){
         Timestamp instant = Timestamp.from(Instant.now());
-        Block b0 = new Block(index, "geneis",instant ,"0");
+        Block b0 = new Block(index, "genesis block",instant ,"0");
         chain.add(b0);
         prevH = b0.Hash;
         index++;
@@ -49,6 +49,13 @@ class BlockChain {
         return chain.getLast();
     }
 
+    public boolean validate(){
+        for (int i = 0;i<chain.size()-1;i++){
+            if (chain.get(i).Hash != chain.get(i+1).prevHash) return false;
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return "this Chain{ "
@@ -59,24 +66,23 @@ class BlockChain {
 
 class Block {
     int index;
-    String data, PHash, Hash, H;
+    String data, prevHash, Hash, H;
     Timestamp timestamp;
-    public Block(int x,String y, Timestamp w, String z) {
-        this.index = x;
-        this.data = y;
-        this.timestamp = w;
-        this.PHash = z;
-        this.Hash = CalculateHash();
+    public Block(int index,String data, Timestamp timestamp, String prevHash) {
+        this.index = index;
+        this.data = data;
+        this.timestamp = timestamp;
+        this.prevHash = prevHash;
+        CalculateHash();
     }
-    private String CalculateHash() {
+    private void CalculateHash() {
         try
         {
-            H = toHexString(getSHA(this.index + this.data + this.timestamp + this.PHash));
+            Hash = toHexString(getSHA(this.index + this.data + this.timestamp + this.prevHash));
         }
         catch (NoSuchAlgorithmException e) {
             System.out.println("Exception thrown for incorrect algorithm: " + e);
         }
-        return H;
     }
     private static byte[] getSHA(String input) throws NoSuchAlgorithmException
     {
@@ -102,7 +108,7 @@ class Block {
                 "index=" + index +
                 ", data='" + data + '\'' +
                 ", timestamp='" + timestamp + '\'' +
-                ", PHash='" + PHash + '\'' +
+                ", previousHash='" + prevHash + '\'' +
                 ", Hash='" + Hash + '\'' +
                 '}';
     }
